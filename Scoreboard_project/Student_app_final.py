@@ -56,14 +56,13 @@ def draw_leaderboard(df):
     else:
         players_df = players_df.sort_values(by="Score", ascending=False)
     
-    # Display top 5 players
         for i, row in players_df.head(5).iterrows():
-        col1, col2 = st.columns([1, 3])
+            col1, col2 = st.columns([1, 3])
         
-        with col1:
-            avatar = load_avatar(row["Avatar"])
-            if avatar:
-                st.image(avatar)
+            with col1:
+                 avatar = load_avatar(row["Avatar"])
+                 if avatar:
+                     st.image(avatar)
         
         with col2:
             st.subheader(f"{i+1}. {row['Name']}")
@@ -72,7 +71,7 @@ def draw_leaderboard(df):
     # Expandable section for remaining players
     with st.expander("View all players"):
         st.dataframe(players_df)
-
+        
 
     
     # Animated effect for avatars
