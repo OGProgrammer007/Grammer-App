@@ -66,8 +66,8 @@ confetti_code = """
 </html>
 """
 
-# Display the confetti effect
-html(confetti_code, height=500)
+# Display the confetti effect in a dedicated container
+html(confetti_code, height=300)
 
 # Load player scores from Excel
 def load_scores():
@@ -134,4 +134,28 @@ def draw_leaderboard(df):
                 st.subheader(f"{rank}. {row['Name']}")
                 st.markdown(f"<h3 style='color:{rank_color}'>{row['Score']} points</h3>", unsafe_allow_html=True)
     
-        # Scrollable s
+        # Scrollable section for all players
+        st.subheader("All Players")
+        with st.expander("Click to view all players"):
+            # Display the remaining players starting from rank 6
+            for i, (index, row) in enumerate(sorted_players[5:]):
+                col1, col2 = st.columns([1, 3])
+            
+                with col1:
+                    avatar = load_avatar(row["Avatar"])  # Load avatar by file name
+                    if avatar:
+                        # Display avatar without rotation
+                        st.image(avatar)
+            
+                with col2:
+                    # Starting rank from 6 onward
+                    rank = str(i + 6)
+                    st.subheader(f"{rank}. {row['Name']}")
+                    st.write(f"**Score:** {row['Score']} points")
+
+# Trigger balloons effect
+st.balloons()
+
+# Load data and display leaderboard
+df = load_scores()
+draw_leaderboard(df)
