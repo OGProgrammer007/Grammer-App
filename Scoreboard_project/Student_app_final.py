@@ -20,8 +20,8 @@ COLORS = {
 # Folder where avatar images are stored in the repository
 AVATAR_FOLDER = "Scoreboard_project/"
 
-# Background music file (You can replace this with any MP3 or WAV file in your repo or external URL)
-BACKGROUND_MUSIC = "Scoreboard_project/background_music.mp3"
+# Background music file (Make sure the file is located in the same folder or adjust path accordingly)
+BACKGROUND_MUSIC = "Scoreboard_project/funky_music.mp3"
 
 # Custom HTML to autoplay background music
 st.markdown(f"""
