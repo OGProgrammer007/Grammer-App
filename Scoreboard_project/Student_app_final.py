@@ -81,6 +81,9 @@ def draw_leaderboard(df):
         angle += 0.1
         time.sleep(0.05)  # Refresh effect
         st.rerun()
+          # Expandable section for remaining players
+    with st.expander("View all players"):
+        st.dataframe(players_df)
 
 # Load data and display leaderboard
 df = load_scores()
