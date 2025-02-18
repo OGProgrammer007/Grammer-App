@@ -1,16 +1,12 @@
 import streamlit as st
-import openpyxl
+import pandas as pd
 import os
-import math
-import numpy as np
 from PIL import Image
-import io
+import numpy as np
+import time
 
 # Excel file path
-EXCEL_FILE = "scores_with_avatars.xlsx"
-
-# Folder where avatar images are stored in the repository
-AVATAR_FOLDER = "avatars/"
+EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
 
 # Colors
 COLORS = {
@@ -21,79 +17,82 @@ COLORS = {
     "white": "#FFFFFF"
 }
 
+# Folder where avatar images are stored in the repository
+AVATAR_FOLDER = "Scoreboard_project/"
+
+# Load player scores from Excel
 def load_scores():
-    """Load player data from the Excel file."""
     if not os.path.exists(EXCEL_FILE):
         st.error(f"Error: File '{EXCEL_FILE}' not found.")
-        return {}
+        return pd.DataFrame(columns=["Name", "Score", "Avatar"])
 
-    workbook = openpyxl.load_workbook(EXCEL_FILE)
-    sheet = workbook.active
-    scores = {}
-
-    for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=3):
-        name, score, avatar = row[0].value, row[1].value, row[2].value
-        if name and score and avatar:
-            scores[name] = {"score": int(score), "avatar": avatar}
-
-    workbook.close()
-    return scores
-
-def load_avatar(path):
-    """Load avatar images."""
-    if not os.path.exists(path):
-        st.warning(f"Avatar '{path}' not found.")
-        return None
     try:
-        avatar = Image.open(path)
-        avatar = avatar.resize((100, 100))
-        return avatar
-    except IOError:
-        st.error(f"Error loading image '{path}'")
-        return None
+        df = pd.read_excel(EXCEL_FILE, engine="openpyxl")
+        df = df.dropna(subset=["Name", "Score"])  # Remove empty rows
+        df["Score"] = df["Score"].astype(int)  # Ensure scores are integers
+        return df.sort_values(by="Score", ascending=False)
+    except Exception as e:
+        st.error(f"Failed to read the Excel file: {e}")
+        return pd.DataFrame(columns=["Name", "Score", "Avatar"])
 
+# Load and resize avatars
+def load_avatar(avatar_filename):
+    avatar_path = os.path.join(AVATAR_FOLDER, avatar_filename)
+    if avatar_filename and os.path.exists(avatar_path):
+        try:
+            img = Image.open(avatar_path)
+            return img.resize((100, 100))
+        except Exception:
+            st.warning(f"Could not load avatar: {avatar_path}")
+            return None
+    return None
+
+# Simulate rotating avatars
 def rotate_image(image, angle):
-    """Rotate image side-to-side effect."""
     return image.rotate(angle, expand=True)
 
-# Load scores and avatars
-players = load_scores()
-avatars = {name: load_avatar(os.path.join(AVATAR_FOLDER, data["avatar"])) for name, data in players.items()}
+# Main leaderboard display
+def draw_leaderboard(df):
+    st.title("🏆 Leaderboard")
+    
+    if df.empty:
+        st.warning("No data available.")
+    else:
+        # Display top 5 players with blue score points
+        for i, row in df.head(5).iterrows():
+            col1, col2 = st.columns([1, 3])
+        
+            with col1:
+                avatar = load_avatar(row["Avatar"])  # Load avatar by file name
+                if avatar:
+                    # Apply rotation to avatar image
+                    angle = np.sin(time.time() + i) * 30
+                    avatar = rotate_image(avatar, angle)
+                    st.image(avatar)
+        
+            with col2:
+                st.subheader(f"{i + 1}. {row['Name']}")
+                st.markdown(f"<h3 style='color:{COLORS['blue']}'>{row['Score']} points</h3>", unsafe_allow_html=True)
+    
+        # Scrollable section for all players
+        st.subheader("All Players")
+        with st.expander("Click to view all players"):
+            # Display the remaining players
+            for i, row in df[5:].iterrows():
+                col1, col2 = st.columns([1, 3])
+            
+                with col1:
+                    avatar = load_avatar(row["Avatar"])  # Load avatar by file name
+                    if avatar:
+                        # Apply rotation to avatar image
+                        angle = np.sin(time.time() + i) * 30
+                        avatar = rotate_image(avatar, angle)
+                        st.image(avatar)
+            
+                with col2:
+                    st.subheader(f"{i + 1}. {row['Name']}")
+                    st.write(f"**Score:** {row['Score']} points")
 
-def draw_leaderboard(angle):
-    """Draw the leaderboard with top 5 players."""
-    st.title("Leaderboard")
-
-    if not players:
-        st.warning("No data available")
-        return
-
-    sorted_players = sorted(players.items(), key=lambda x: x[1]["score"], reverse=True)
-
-    # Top 5 players
-    for i, (player, data) in enumerate(sorted_players[:5]):
-        player_name = f"{i + 1}. {player}"
-        player_score = f"{data['score']} points"
-
-        player_color = COLORS["gold"] if i == 0 else COLORS["silver"] if i == 1 else COLORS["bronze"] if i == 2 else COLORS["white"]
-        st.markdown(f"<p style='color:{player_color}; font-size: 24px'>{player_name} - {player_score}</p>", unsafe_allow_html=True)
-
-        # Draw rotating avatar
-        avatar = avatars.get(player)
-        if avatar:
-            rotated_avatar = rotate_image(avatar, np.sin(angle + i) * 30)
-            avatar_io = io.BytesIO()
-            rotated_avatar.save(avatar_io, format='PNG')
-            avatar_io.seek(0)
-            st.image(avatar_io, width=100)
-
-def main():
-    angle = 0  # Angle for rotating the avatars
-
-    while True:
-        draw_leaderboard(angle)
-        angle += 0.1
-        st.experimental_rerun()  # Refresh the page to update the leaderboard
-
-if __name__ == "__main__":
-    main()
+# Load data and display leaderboard
+df = load_scores()
+draw_leaderboard(df)
