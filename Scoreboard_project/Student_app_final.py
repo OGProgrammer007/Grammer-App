@@ -69,8 +69,11 @@ def draw_leaderboard(df):
     if df.empty:
         st.warning("No data available.")
     else:
+        # Sort players by score
+        sorted_players = sorted(df.iterrows(), key=lambda x: x[1]["Score"], reverse=True)
+
         # Display top 3 players with gold, silver, and bronze colors
-        for i, row in df.head(5).iterrows():
+        for i, (index, row) in enumerate(sorted_players[:5]):
             col1, col2 = st.columns([1, 3])
         
             with col1:
@@ -103,7 +106,7 @@ def draw_leaderboard(df):
         st.subheader("All Players")
         with st.expander("Click to view all players"):
             # Display the remaining players starting from rank 6
-            for i, row in df[5:].iterrows():
+            for i, (index, row) in enumerate(sorted_players[5:]):
                 col1, col2 = st.columns([1, 3])
             
                 with col1:
