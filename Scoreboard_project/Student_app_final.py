@@ -54,7 +54,7 @@ def draw_leaderboard(df):
     if df.empty:
         st.warning("No data available.")
     else:
-    players_df = players_df.sort_values(by="Score", ascending=False)
+        players_df = players_df.sort_values(by="Score", ascending=False)
     
     # Display top 5 players
      for i, row in players_df.head(5).iterrows():
