@@ -57,7 +57,7 @@ def draw_leaderboard(df):
         players_df = players_df.sort_values(by="Score", ascending=False)
     
     # Display top 5 players
-     for i, row in players_df.head(5).iterrows():
+        for i, row in players_df.head(5).iterrows():
         col1, col2 = st.columns([1, 3])
         
         with col1:
