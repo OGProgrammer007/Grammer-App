@@ -53,9 +53,27 @@ def draw_leaderboard(df):
     
     if df.empty:
         st.warning("No data available.")
-        return
+    else:
+    players_df = players_df.sort_values(by="Score", ascending=False)
+    
+    # Display top 5 players
+     for i, row in players_df.head(5).iterrows():
+        col1, col2 = st.columns([1, 3])
+        
+        with col1:
+            avatar = load_avatar(row["Avatar"])
+            if avatar:
+                st.image(avatar)
+        
+        with col2:
+            st.subheader(f"{i+1}. {row['Name']}")
+            st.write(f"**Score:** {row['Score']} points")
+    
+    # Expandable section for remaining players
+    with st.expander("View all players"):
+        st.dataframe(players_df)
 
-    top_5 = df.head(5)
+
     
     # Animated effect for avatars
     angle = 0  
@@ -81,9 +99,6 @@ def draw_leaderboard(df):
         angle += 0.1
         time.sleep(0.05)  # Refresh effect
         st.rerun()
-          # Expandable section for remaining players
-    with st.expander("View all players"):
-        st.dataframe(players_df)
 
 # Load data and display leaderboard
 df = load_scores()
