@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 
 # Excel file path
-EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
+EXCEL_FILE = "scores_with_avatars.xlsx"
 
 # Colors
 COLORS = {
@@ -86,3 +86,6 @@ def draw_leaderboard(df):
 df = load_scores()
 draw_leaderboard(df)
 
+# Scrollable list for all players
+with st.expander("📜 View All Players"):
+    st.dataframe(df)
