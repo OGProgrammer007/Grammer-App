@@ -97,7 +97,7 @@ def draw_leaderboard(df):
                     st.write(f"**Score:** {row['Score']} points")
 
 # Play background music
-st.audio(FUNKY_MUSIC, format="audio/mp3", start_time=0)
+st.audio(BACKGROUND_MUSIC, format="audio/mp3", start_time=0)
 
 # Trigger balloons effect
 st.balloons()
