@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from PIL import Image
 import time
+from streamlit.components.v1 import html
 
 # Excel file path
 EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
@@ -27,6 +28,46 @@ st.markdown("### Click the play button below to start the music 🎵")
 
 # Embed the music player (users will need to click play)
 st.audio(BACKGROUND_MUSIC, start_time=0)
+
+# Embedding confetti effect via JavaScript for infinite loop
+confetti_code = """
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <script>
+      function launchConfetti() {
+        var end = Date.now() + (10 * 1000); // 10 seconds of continuous confetti
+        var frameId;
+        var colors = ['#ff0', '#0f0', '#f00', '#00f', '#0ff'];
+        
+        function frame() {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: Math.random(), y: Math.random() },
+            colors: colors
+          });
+          
+          if (Date.now() < end) {
+            frameId = requestAnimationFrame(frame);
+          } else {
+            launchConfetti();  // Repeat the confetti after 10 seconds
+          }
+        }
+        frame();
+      }
+      window.onload = launchConfetti;
+    </script>
+  </head>
+  <body>
+    <h2>Enjoy the infinite confetti! 🎉</h2>
+  </body>
+</html>
+"""
+
+# Display the confetti effect
+html(confetti_code, height=500)
 
 # Load player scores from Excel
 def load_scores():
@@ -93,28 +134,4 @@ def draw_leaderboard(df):
                 st.subheader(f"{rank}. {row['Name']}")
                 st.markdown(f"<h3 style='color:{rank_color}'>{row['Score']} points</h3>", unsafe_allow_html=True)
     
-        # Scrollable section for all players
-        st.subheader("All Players")
-        with st.expander("Click to view all players"):
-            # Display the remaining players starting from rank 6
-            for i, (index, row) in enumerate(sorted_players[5:]):
-                col1, col2 = st.columns([1, 3])
-            
-                with col1:
-                    avatar = load_avatar(row["Avatar"])  # Load avatar by file name
-                    if avatar:
-                        # Display avatar without rotation
-                        st.image(avatar)
-            
-                with col2:
-                    # Starting rank from 6 onward
-                    rank = str(i + 6)
-                    st.subheader(f"{rank}. {row['Name']}")
-                    st.write(f"**Score:** {row['Score']} points")
-
-# Trigger balloons effect
-st.balloons()
-
-# Load data and display leaderboard
-df = load_scores()
-draw_leaderboard(df)
+        # Scrollable s
