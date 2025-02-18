@@ -21,7 +21,15 @@ COLORS = {
 AVATAR_FOLDER = "Scoreboard_project/"
 
 # Background music file (You can replace this with any MP3 or WAV file in your repo or external URL)
-BACKGROUND_MUSIC = "Scoreboard_project/funky_music.mp3"
+BACKGROUND_MUSIC = "Scoreboard_project/background_music.mp3"
+
+# Custom HTML to autoplay background music
+st.markdown(f"""
+    <audio autoplay loop>
+        <source src="{BACKGROUND_MUSIC}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+""", unsafe_allow_html=True)
 
 # Load player scores from Excel
 def load_scores():
@@ -95,9 +103,6 @@ def draw_leaderboard(df):
                 with col2:
                     st.subheader(f"{i + 1}. {row['Name']}")
                     st.write(f"**Score:** {row['Score']} points")
-
-# Play background music
-st.audio(BACKGROUND_MUSIC, format="audio/mp3", start_time=0)
 
 # Trigger balloons effect
 st.balloons()
