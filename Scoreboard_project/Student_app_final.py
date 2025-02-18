@@ -1,26 +1,14 @@
 import streamlit as st
+import openpyxl
 import os
-import pygame
-from random import randint
-
-# Initialize pygame mixer for background music
-pygame.mixer.init()
 
 # Constants for chat interface and colors
 GOLD = (255, 223, 0)
 BRONZE = (205, 127, 50)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
-ENTRY_FONT = pygame.font.Font(None, 36)
-SCORE_FONT = pygame.font.Font(None, 30)
 
-# Background music
-def play_music():
-    if not pygame.mixer.music.get_busy():
-        pygame.mixer.music.load("funky_music.mp3")
-        pygame.mixer.music.play(loops=-1, start=0.0)
-
-# Players and their data
+# Load players' scores and avatars from Excel
 def load_scores():
     scores = {}
     workbook = openpyxl.load_workbook("scores.xlsx")
@@ -35,14 +23,11 @@ def load_scores():
     return scores
 
 def load_avatar(path):
-    """Load and resize avatars."""
+    """Load avatar image."""
     if not os.path.exists(path):
         print(f"Warning: Avatar '{path}' not found.")
         return None
-    # Load and resize the avatar image
-    avatar = pygame.image.load(path)
-    avatar = pygame.transform.scale(avatar, (50, 50))  # Resize to fit
-    return avatar
+    return path
 
 # Display top players
 def display_players():
@@ -57,10 +42,9 @@ def display_players():
         player_name = f"{i + 1}. {player}"
         player_score = f"{data['score']} points"
         avatar_path = f"avatars/{data['avatar']}"  # Assuming avatars are stored in a folder named 'avatars'
-        avatar = load_avatar(avatar_path)
-
+        
         # Display avatar, player name, and score
-        st.image(avatar, width=50, caption=player_name, use_column_width=False)
+        st.image(load_avatar(avatar_path), width=50, caption=player_name, use_column_width=False)
         st.text(player_score)
         st.text(" ")
 
@@ -197,9 +181,6 @@ elif st.session_state.stage == "rewrite":
             st.session_state.validation = {}
             st.session_state.stage = "user"
             st.rerun()
-
-# Play background music
-play_music()
 
 # Display the players
 display_players()
