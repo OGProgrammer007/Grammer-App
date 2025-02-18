@@ -106,39 +106,20 @@ def draw_leaderboard(df):
         # Sort players by score
         sorted_players = sorted(df.iterrows(), key=lambda x: x[1]["Score"], reverse=True)
 
-        # Display top 3 players with gold, silver, and bronze colors
-        for i, (index, row) in enumerate(sorted_players[:5]):
-            col1, col2 = st.columns([1, 3])
-        
-            with col1:
-                avatar = load_avatar(row["Avatar"])  # Load avatar by file name
-                if avatar:
-                    # Display avatar without rotation
-                    st.image(avatar)
-        
-            with col2:
-                # Apply ranking colors for top 3 players
-                if i == 0:
-                    rank_color = COLORS["gold"]
-                    rank = "1"
-                elif i == 1:
-                    rank_color = COLORS["silver"]
-                    rank = "2"
-                elif i == 2:
-                    rank_color = COLORS["bronze"]
-                    rank = "3"
-                else:
-                    rank_color = COLORS["blue"]
-                    rank = str(i + 1)
-                
-                st.subheader(f"{rank}. {row['Name']}")
-                st.markdown(f"<h3 style='color:{rank_color}'>{row['Score']} points</h3>", unsafe_allow_html=True)
-    
-        # Scrollable section for all players
-        st.subheader("All Players")
-        with st.expander("Click to view all players"):
-            # Display the remaining players starting from rank 6
-            for i, (index, row) in enumerate(sorted_players[5:]):
+        # Create three columns: confetti, leaderboard, confetti
+        col1, col2, col3 = st.columns([1, 5, 1])
+
+        # Confetti effect on left and right columns
+        with col1:
+            html(confetti_code, height=300)
+
+        with col3:
+            html(confetti_code, height=300)
+
+        with col2:
+            # Display leaderboard
+            # Display top 3 players with gold, silver, and bronze colors
+            for i, (index, row) in enumerate(sorted_players[:5]):
                 col1, col2 = st.columns([1, 3])
             
                 with col1:
@@ -148,10 +129,41 @@ def draw_leaderboard(df):
                         st.image(avatar)
             
                 with col2:
-                    # Starting rank from 6 onward
-                    rank = str(i + 6)
+                    # Apply ranking colors for top 3 players
+                    if i == 0:
+                        rank_color = COLORS["gold"]
+                        rank = "1"
+                    elif i == 1:
+                        rank_color = COLORS["silver"]
+                        rank = "2"
+                    elif i == 2:
+                        rank_color = COLORS["bronze"]
+                        rank = "3"
+                    else:
+                        rank_color = COLORS["blue"]
+                        rank = str(i + 1)
+                    
                     st.subheader(f"{rank}. {row['Name']}")
-                    st.write(f"**Score:** {row['Score']} points")
+                    st.markdown(f"<h3 style='color:{rank_color}'>{row['Score']} points</h3>", unsafe_allow_html=True)
+        
+            # Scrollable section for all players
+            st.subheader("All Players")
+            with st.expander("Click to view all players"):
+                # Display the remaining players starting from rank 6
+                for i, (index, row) in enumerate(sorted_players[5:]):
+                    col1, col2 = st.columns([1, 3])
+                
+                    with col1:
+                        avatar = load_avatar(row["Avatar"])  # Load avatar by file name
+                        if avatar:
+                            # Display avatar without rotation
+                            st.image(avatar)
+                
+                    with col2:
+                        # Starting rank from 6 onward
+                        rank = str(i + 6)
+                        st.subheader(f"{rank}. {row['Name']}")
+                        st.write(f"**Score:** {row['Score']} points")
 
 # Trigger balloons effect
 st.balloons()
