@@ -20,6 +20,9 @@ COLORS = {
 # Folder where avatar images are stored in the repository
 AVATAR_FOLDER = "Scoreboard_project/"
 
+# Funky music file path
+MUSIC_FILE = "Scoreboard_project/funky_music.mp3"
+
 # Load player scores from Excel
 def load_scores():
     if not os.path.exists(EXCEL_FILE):
@@ -47,13 +50,22 @@ def load_avatar(avatar_filename):
             return None
     return None
 
-# Simulate rotating avatars
-def rotate_image(image, angle):
-    return image.rotate(angle, expand=True)
+# Simulate side-to-side bobbing for avatars
+def bobbing_effect(image, offset):
+    return image.transform(
+        (image.size[0], image.size[1]),
+        Image.AFFINE,
+        (1, 0, offset, 0, 1, 0),
+        resample=Image.BICUBIC
+    )
 
 # Main leaderboard display
 def draw_leaderboard(df):
     st.title("🏆 Leaderboard")
+    
+    # Play funky music
+    if os.path.exists(MUSIC_FILE):
+        st.audio(MUSIC_FILE, format='audio/mp3', start_time=0)
     
     if df.empty:
         st.warning("No data available.")
@@ -65,9 +77,9 @@ def draw_leaderboard(df):
             with col1:
                 avatar = load_avatar(row["Avatar"])  # Load avatar by file name
                 if avatar:
-                    # Apply rotation to avatar image
-                    angle = np.sin(time.time() + i) * 30
-                    avatar = rotate_image(avatar, angle)
+                    # Apply side-to-side bobbing to avatar image
+                    offset = np.sin(time.time() + i) * 20  # Create side-to-side movement
+                    avatar = bobbing_effect(avatar, offset)
                     st.image(avatar)
         
             with col2:
@@ -84,9 +96,9 @@ def draw_leaderboard(df):
                 with col1:
                     avatar = load_avatar(row["Avatar"])  # Load avatar by file name
                     if avatar:
-                        # Apply rotation to avatar image
-                        angle = np.sin(time.time() + i) * 30
-                        avatar = rotate_image(avatar, angle)
+                        # Apply side-to-side bobbing to avatar image
+                        offset = np.sin(time.time() + i) * 20  # Create side-to-side movement
+                        avatar = bobbing_effect(avatar, offset)
                         st.image(avatar)
             
                 with col2:
