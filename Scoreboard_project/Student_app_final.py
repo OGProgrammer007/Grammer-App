@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import pandas as pd
 import os
 import time
@@ -85,7 +85,3 @@ def draw_leaderboard(df):
 # Load data and display leaderboard
 df = load_scores()
 draw_leaderboard(df)
-
-# Scrollable list for all players
-with st.expander("📜 View All Players"):
-    st.dataframe(df)
