@@ -50,18 +50,9 @@ def load_avatar(avatar_filename):
             return None
     return None
 
-# Simulate rotating avatars (side to side)
+# Rotate image (smooth side-to-side rotation effect)
 def rotate_image(image, angle):
     return image.rotate(angle, expand=True)
-
-# Simulate side-to-side bobbing for avatars
-def bobbing_effect(image, offset):
-    return image.transform(
-        (image.size[0], image.size[1]),
-        Image.AFFINE,
-        (1, 0, offset, 0, 1, 0),
-        resample=Image.BICUBIC
-    )
 
 # Main leaderboard display
 def draw_leaderboard(df):
@@ -81,15 +72,16 @@ def draw_leaderboard(df):
             with col1:
                 avatar = load_avatar(row["Avatar"])  # Load avatar by file name
                 if avatar:
-                    # Apply side-to-side bobbing and rotation to avatar image
-                    offset = np.sin(time.time() + i) * 20  # Side-to-side movement
-                    avatar = bobbing_effect(avatar, offset)
-                    angle = np.sin(time.time() + i) * 30  # Rotation effect
+                    # Apply smooth side-to-side rotation (bob and rotate effect)
+                    angle = np.sin(time.time() * 2 + i) * 30  # Side-to-side bobbing rotation
                     avatar = rotate_image(avatar, angle)
                     st.image(avatar)
         
             with col2:
-                st.subheader(f"{i + 1}. {row['Name']}")
+                # Labeling based on their position (rank)
+                rank = i + 1
+                rank_label = f"{rank}{'st' if rank == 1 else 'nd' if rank == 2 else 'rd' if rank == 3 else 'th'}"
+                st.subheader(f"{rank_label}. {row['Name']}")
                 st.markdown(f"<h3 style='color:{COLORS['blue']}'>{row['Score']} points</h3>", unsafe_allow_html=True)
     
         # Scrollable section for all players
@@ -102,15 +94,16 @@ def draw_leaderboard(df):
                 with col1:
                     avatar = load_avatar(row["Avatar"])  # Load avatar by file name
                     if avatar:
-                        # Apply side-to-side bobbing and rotation to avatar image
-                        offset = np.sin(time.time() + i) * 20  # Side-to-side movement
-                        avatar = bobbing_effect(avatar, offset)
-                        angle = np.sin(time.time() + i) * 30  # Rotation effect
+                        # Apply smooth side-to-side rotation (bob and rotate effect)
+                        angle = np.sin(time.time() * 2 + i) * 30  # Side-to-side bobbing rotation
                         avatar = rotate_image(avatar, angle)
                         st.image(avatar)
             
                 with col2:
-                    st.subheader(f"{i + 1}. {row['Name']}")
+                    # Labeling based on their position (rank)
+                    rank = i + 1
+                    rank_label = f"{rank}{'st' if rank == 1 else 'nd' if rank == 2 else 'rd' if rank == 3 else 'th'}"
+                    st.subheader(f"{rank_label}. {row['Name']}")
                     st.write(f"**Score:** {row['Score']} points")
 
 # Load data and display leaderboard
