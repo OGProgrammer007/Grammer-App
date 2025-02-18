@@ -1,5 +1,4 @@
 import streamlit as st
-import lorem
 from random import randint
 import time
 
@@ -8,11 +7,6 @@ if "stage" not in st.session_state:
     st.session_state.history = []
     st.session_state.pending = None
     st.session_state.validation = {}
-
-def chat_stream():
-    for i in range(randint(3, 9)):
-        yield lorem.sentence() + " "
-        time.sleep(0.2)
 
 def validate(response):
     response_sentences = response.split(". ")
@@ -140,3 +134,4 @@ elif st.session_state.stage == "rewrite":
             st.session_state.validation = {}
             st.session_state.stage = "user"
             st.rerun()
+
