@@ -20,6 +20,9 @@ COLORS = {
 # Folder where avatar images are stored in the repository
 AVATAR_FOLDER = "Scoreboard_project/"
 
+# Background music file (You can replace this with any MP3 or WAV file in your repo or external URL)
+BACKGROUND_MUSIC = "Scoreboard_project/funky_music.mp3"
+
 # Load player scores from Excel
 def load_scores():
     if not os.path.exists(EXCEL_FILE):
@@ -92,6 +95,12 @@ def draw_leaderboard(df):
                 with col2:
                     st.subheader(f"{i + 1}. {row['Name']}")
                     st.write(f"**Score:** {row['Score']} points")
+
+# Play background music
+st.audio(FUNKY_MUSIC, format="audio/mp3", start_time=0)
+
+# Trigger balloons effect
+st.balloons()
 
 # Load data and display leaderboard
 df = load_scores()
