@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 
 # Excel file path
-EXCEL_FILE = "scores_with_avatars.xlsx"
+EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
 
 # Colors
 COLORS = {
