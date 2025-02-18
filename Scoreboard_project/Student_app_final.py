@@ -54,51 +54,49 @@ def draw_leaderboard(df):
     if df.empty:
         st.warning("No data available.")
     else:
-        players_df = players_df.sort_values(by="Score", ascending=False)
-    
-        for i, row in players_df.head(5).iterrows():
+        # Show top 5 players
+        for i, row in df.head(5).iterrows():
             col1, col2 = st.columns([1, 3])
         
             with col1:
-                 avatar = load_avatar(row["Avatar"])
-                 if avatar:
-                     st.image(avatar)
-        
-        with col2:
-            st.subheader(f"{i+1}. {row['Name']}")
-            st.write(f"**Score:** {row['Score']} points")
-    
-    # Expandable section for remaining players
-    with st.expander("View all players"):
-        st.dataframe(players_df)
-        
-
-    
-    # Animated effect for avatars
-    angle = 0  
-    while True:
-        cols = st.columns(2)  # Create two columns for better layout
-        for i, row in top_5.iterrows():
-            name, score, avatar_path = row["Name"], row["Score"], row["Avatar"]
-            color = COLORS["gold"] if i == 0 else COLORS["silver"] if i == 1 else COLORS["bronze"] if i == 2 else COLORS["white"]
-            
-            avatar = load_avatar(avatar_path)
-            if avatar:
-                avatar = rotate_image(avatar, np.sin(angle + i) * 30)
-
-            with cols[0]:
-                st.markdown(f"<h3 style='color:{color}'>{i + 1}. {name}</h3>", unsafe_allow_html=True)
-
-            with cols[1]:
-                st.markdown(f"<h3 style='color:#6495ED'>{score} points</h3>", unsafe_allow_html=True)
-                
+                avatar = load_avatar(row["Avatar"])
                 if avatar:
                     st.image(avatar)
+        
+            with col2:
+                st.subheader(f"{i + 1}. {row['Name']}")
+                st.write(f"**Score:** {row['Score']} points")
+    
+        # Expandable section for remaining players
+        with st.expander("View all players"):
+            st.dataframe(df)
+        
 
-        angle += 0.1
-        time.sleep(0.05)  # Refresh effect
-        st.rerun()
+    # Animated effect for avatars
+    angle = 0
+    for i, row in df.head(5).iterrows():
+        col1, col2 = st.columns([1, 3])
+        name, score, avatar_path = row["Name"], row["Score"], row["Avatar"]
+        color = COLORS["gold"] if i == 0 else COLORS["silver"] if i == 1 else COLORS["bronze"] if i == 2 else COLORS["white"]
+            
+        avatar = load_avatar(avatar_path)
+        if avatar:
+            avatar = rotate_image(avatar, np.sin(angle + i) * 30)
+
+        with col1:
+            st.markdown(f"<h3 style='color:{color}'>{i + 1}. {name}</h3>", unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(f"<h3 style='color:#6495ED'>{score} points</h3>", unsafe_allow_html=True)
+                
+            if avatar:
+                st.image(avatar)
+
+    angle += 0.1
+    time.sleep(0.05)  # Refresh effect
+    st.rerun()
 
 # Load data and display leaderboard
 df = load_scores()
 draw_leaderboard(df)
+
