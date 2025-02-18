@@ -22,7 +22,10 @@ AVATAR_FOLDER = "Scoreboard_project/"
 # Music file path
 BACKGROUND_MUSIC = "Scoreboard_project/funky_music.mp3"
 
-# Embed the music player (this will auto-play the song when the app is loaded)
+# Display instructions for the user to play the music
+st.markdown("### Click the play button below to start the music 🎵")
+
+# Embed the music player (users will need to click play)
 st.audio(BACKGROUND_MUSIC, start_time=0)
 
 # Load player scores from Excel
