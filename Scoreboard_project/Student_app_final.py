@@ -79,8 +79,8 @@ def draw_leaderboard(df):
 
             with col2:
                 color = COLORS["gold"] if i == 0 else COLORS["silver"] if i == 1 else COLORS["bronze"]
-                st.subheader(f"{i + 1}. {row['Name']}", color=color)
-                st.write(f"**{row['Score']} points**")
+                st.markdown(f"<h3 style='color:{color}'>{i + 1}. {row['Name']}</h3>", unsafe_allow_html=True)
+                st.markdown(f"**{row['Score']} points**", unsafe_allow_html=True)
         
         # Display remaining players (from 4th onward)
         for i, row in sorted_players.iloc[3:].iterrows():
@@ -96,8 +96,8 @@ def draw_leaderboard(df):
                     st.image(rotated_avatar, width=100)
 
             with col2:
-                st.subheader(f"{i + 1}. {row['Name']}", color=COLORS["white"])
-                st.write(f"**{row['Score']} points**")
+                st.markdown(f"<h3 style='color:{COLORS['white']}'>{i + 1}. {row['Name']}</h3>", unsafe_allow_html=True)
+                st.markdown(f"**{row['Score']} points**", unsafe_allow_html=True)
     
         # Expandable section for remaining players
         with st.expander("View all players"):
