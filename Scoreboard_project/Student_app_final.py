@@ -49,8 +49,9 @@ def load_avatar(path):
             return None
     return None
 
-# Simulate rotating avatars
+# Simulate rotating avatars side to side
 def rotate_image(image, angle):
+    # Apply side-to-side rotation
     return image.rotate(angle, expand=True)
 
 # Main leaderboard display
@@ -63,8 +64,8 @@ def draw_leaderboard(df):
         # Sorting the players based on their scores in descending order
         sorted_players = df.sort_values(by="Score", ascending=False)
 
-        # Display top 5 players
-        for i, row in sorted_players.head(5).iterrows():
+        # Display top 3 players with gold, silver, and bronze labels
+        for i, row in sorted_players.head(3).iterrows():
             col1, col2 = st.columns([1, 3])
 
             with col1:
@@ -77,8 +78,26 @@ def draw_leaderboard(df):
                     st.image(rotated_avatar, width=100)
 
             with col2:
-                st.subheader(f"{i + 1}. {row['Name']}")
-                st.write(f"**Score:** {row['Score']} points")
+                color = COLORS["gold"] if i == 0 else COLORS["silver"] if i == 1 else COLORS["bronze"]
+                st.subheader(f"{i + 1}. {row['Name']}", color=color)
+                st.write(f"**{row['Score']} points**")
+        
+        # Display remaining players (from 4th onward)
+        for i, row in sorted_players.iloc[3:].iterrows():
+            col1, col2 = st.columns([1, 3])
+
+            with col1:
+                avatar_path = os.path.join(AVATAR_FOLDER, row["Avatar"])
+                avatar = load_avatar(avatar_path)
+                if avatar:
+                    # Apply rotation
+                    angle = np.sin(time.time()) * 30  # Continuous rotation effect
+                    rotated_avatar = rotate_image(avatar, angle)
+                    st.image(rotated_avatar, width=100)
+
+            with col2:
+                st.subheader(f"{i + 1}. {row['Name']}", color=COLORS["white"])
+                st.write(f"**{row['Score']} points**")
     
         # Expandable section for remaining players
         with st.expander("View all players"):
