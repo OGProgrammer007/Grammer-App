@@ -31,6 +31,21 @@ st.markdown(f"""
     </audio>
 """, unsafe_allow_html=True)
 
+# Chat widget embed code (from Tawk.to)
+st.markdown("""
+<script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/your_tawkto_id/default';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+    })();
+</script>
+""", unsafe_allow_html=True)
+
 # Load player scores from Excel
 def load_scores():
     if not os.path.exists(EXCEL_FILE):
