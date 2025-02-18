@@ -69,7 +69,7 @@ def draw_leaderboard(df):
     if df.empty:
         st.warning("No data available.")
     else:
-        # Display top 5 players with blue score points
+        # Display top 3 players with gold, silver, and bronze colors
         for i, row in df.head(5).iterrows():
             col1, col2 = st.columns([1, 3])
         
@@ -82,13 +82,27 @@ def draw_leaderboard(df):
                     st.image(avatar)
         
             with col2:
-                st.subheader(f"{row['Name']}")
-                st.markdown(f"<h3 style='color:{COLORS['blue']}'>{row['Score']} points</h3>", unsafe_allow_html=True)
+                # Apply ranking colors for top 3 players
+                if i == 0:
+                    rank_color = COLORS["gold"]
+                    rank = "1"
+                elif i == 1:
+                    rank_color = COLORS["silver"]
+                    rank = "2"
+                elif i == 2:
+                    rank_color = COLORS["bronze"]
+                    rank = "3"
+                else:
+                    rank_color = COLORS["blue"]
+                    rank = str(i + 1)
+                
+                st.subheader(f"{rank}. {row['Name']}")
+                st.markdown(f"<h3 style='color:{rank_color}'>{row['Score']} points</h3>", unsafe_allow_html=True)
     
         # Scrollable section for all players
         st.subheader("All Players")
         with st.expander("Click to view all players"):
-            # Display the remaining players
+            # Display the remaining players starting from rank 6
             for i, row in df[5:].iterrows():
                 col1, col2 = st.columns([1, 3])
             
@@ -101,7 +115,9 @@ def draw_leaderboard(df):
                         st.image(avatar)
             
                 with col2:
-                    st.subheader(f"{row['Name']}")
+                    # Starting rank from 6 onward
+                    rank = str(i + 6)
+                    st.subheader(f"{rank}. {row['Name']}")
                     st.write(f"**Score:** {row['Score']} points")
 
 # Trigger balloons effect
