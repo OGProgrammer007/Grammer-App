@@ -22,10 +22,10 @@ AVATAR_FOLDER = "Scoreboard_project/"
 # Background music file (Make sure the file is located in the same folder or adjust path accordingly)
 BACKGROUND_MUSIC = "Scoreboard_project/funky_music.mp3"
 
-# Custom HTML to autoplay background music
+# Play background music
 st.markdown(f"""
     <audio autoplay loop>
-        <source src="{BACKGROUND_MUSIC}" type="audio/mp3">
+        <source src="data:audio/mp3;base64,{open(BACKGROUND_MUSIC, 'rb').read().encode('base64')}" type="audio/mp3">
         Your browser does not support the audio element.
     </audio>
 """, unsafe_allow_html=True)
