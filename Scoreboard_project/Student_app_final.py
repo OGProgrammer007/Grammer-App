@@ -1,7 +1,70 @@
 import streamlit as st
+import os
+import pygame
 from random import randint
-import time
 
+# Initialize pygame mixer for background music
+pygame.mixer.init()
+
+# Constants for chat interface and colors
+GOLD = (255, 223, 0)
+BRONZE = (205, 127, 50)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+ENTRY_FONT = pygame.font.Font(None, 36)
+SCORE_FONT = pygame.font.Font(None, 30)
+
+# Background music
+def play_music():
+    if not pygame.mixer.music.get_busy():
+        pygame.mixer.music.load("funky_music.mp3")
+        pygame.mixer.music.play(loops=-1, start=0.0)
+
+# Players and their data
+def load_scores():
+    scores = {}
+    workbook = openpyxl.load_workbook("scores.xlsx")
+    sheet = workbook.active
+
+    for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=3):
+        name, score, avatar = row[0].value, row[1].value, row[2].value
+        if name and score and avatar:
+            scores[name] = {"score": int(score), "avatar": avatar}
+
+    workbook.close()
+    return scores
+
+def load_avatar(path):
+    """Load and resize avatars."""
+    if not os.path.exists(path):
+        print(f"Warning: Avatar '{path}' not found.")
+        return None
+    # Load and resize the avatar image
+    avatar = pygame.image.load(path)
+    avatar = pygame.transform.scale(avatar, (50, 50))  # Resize to fit
+    return avatar
+
+# Display top players
+def display_players():
+    players = load_scores()
+    sorted_players = sorted(players.items(), key=lambda x: x[1]["score"], reverse=True)
+
+    # Top 5 players
+    y_start = 100
+    colors = [GOLD, BRONZE] + [WHITE] * max(0, (len(sorted_players) - 1))
+
+    for i, (player, data) in enumerate(sorted_players[:5]):
+        player_name = f"{i + 1}. {player}"
+        player_score = f"{data['score']} points"
+        avatar_path = f"avatars/{data['avatar']}"  # Assuming avatars are stored in a folder named 'avatars'
+        avatar = load_avatar(avatar_path)
+
+        # Display avatar, player name, and score
+        st.image(avatar, width=50, caption=player_name, use_column_width=False)
+        st.text(player_score)
+        st.text(" ")
+
+# Chat functionality
 if "stage" not in st.session_state:
     st.session_state.stage = "user"
     st.session_state.history = []
@@ -135,3 +198,8 @@ elif st.session_state.stage == "rewrite":
             st.session_state.stage = "user"
             st.rerun()
 
+# Play background music
+play_music()
+
+# Display the players
+display_players()
