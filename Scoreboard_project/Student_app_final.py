@@ -1,19 +1,14 @@
 import pygame
 import openpyxl
 import os
-import time
+import math
 import numpy as np
-from PIL import Image
-import streamlit as st
 
 # Excel file path
-EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
+EXCEL_FILE = "scores_with_avatars.xlsx"
 
 # Folder where avatar images are stored in the repository
-AVATAR_FOLDER = "Scoreboard_project/"
-
-# Funky music file path
-MUSIC_FILE = "Scoreboard_project/funky_music.mp3"
+AVATAR_FOLDER = "avatars/"
 
 # Colors
 COLORS = {
@@ -110,38 +105,35 @@ def draw_leaderboard(angle):
             avatar_rect = rotated_avatar.get_rect(center=(100, y_start + i * 100 + 65))
             screen.blit(rotated_avatar, avatar_rect.topleft)
 
-    # Scrollable section for remaining players
-    with st.expander("View all players"):
-        for i, (player, data) in enumerate(sorted_players[5:]):
-            col1, col2 = st.columns([1, 3])
+    # Draw scrollable list of remaining players (optional, or could be another screen or section)
+    y_offset = y_start + 120 * 5
+    for i, (player, data) in enumerate(sorted_players[5:]):
+        player_name = f"{i + 6}. {player}"
+        player_score = f"{data['score']} points"
 
-            with col1:
-                avatar_path = os.path.join(AVATAR_FOLDER, data["avatar"])
-                avatar = load_avatar(avatar_path)
-                if avatar:
-                    # Apply rotation
-                    angle = np.sin(time.time()) * 30  # Continuous rotation effect
-                    rotated_avatar = rotate_image(avatar, angle)
-                    st.image(rotated_avatar, width=100)
+        player_text = ENTRY_FONT.render(player_name, True, COLORS["white"])
+        score_text = SCORE_FONT.render(player_score, True, COLORS["blue"])
 
-            with col2:
-                st.markdown(f"<h3 style='color:{COLORS['white']}'>{i + 1}. {player}</h3>", unsafe_allow_html=True)
-                st.markdown(f"**{data['score']} points**", unsafe_allow_html=True)
+        screen.blit(player_text, (200, y_offset + i * 40))
+        screen.blit(score_text, (580, y_offset + i * 40))
 
-# Run the pygame window to show the leaderboard
-running = True
-angle = 0  # Angle for rotating the avatars
+def main():
+    running = True
+    angle = 0  # Angle for rotating the avatars
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    angle += 0.1
+        angle += 0.1
 
-    draw_leaderboard(angle)
+        draw_leaderboard(angle)
 
-    pygame.display.update()  # Refresh/update the scores
-    pygame.time.delay(50)  # Delay to control the speed
+        pygame.display.update()  # Refresh/update the scores
+        pygame.time.delay(50)  # Delay to control the speed
 
-pygame.quit()
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
