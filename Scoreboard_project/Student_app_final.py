@@ -4,7 +4,7 @@ from PIL import Image
 import os
 
 # Excel file for scores
-EXCEL_FILE = os.path.join(os.path.dirname(__file__), "scores_with_avatars.xlsx")
+EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
 
 def load_scores():
     """Load player data from the Excel file."""
