@@ -82,7 +82,7 @@ def draw_leaderboard(df):
                     st.image(avatar)
         
             with col2:
-                st.subheader(f"{i + 1}. {row['Name']}")
+                st.subheader(f"{row['Name']}")
                 st.markdown(f"<h3 style='color:{COLORS['blue']}'>{row['Score']} points</h3>", unsafe_allow_html=True)
     
         # Scrollable section for all players
@@ -101,7 +101,7 @@ def draw_leaderboard(df):
                         st.image(avatar)
             
                 with col2:
-                    st.subheader(f"{i + 1}. {row['Name']}")
+                    st.subheader(f"{row['Name']}")
                     st.write(f"**Score:** {row['Score']} points")
 
 # Trigger balloons effect
