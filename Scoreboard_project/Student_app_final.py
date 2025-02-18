@@ -50,7 +50,7 @@ def load_avatar(avatar_filename):
             return None
     return None
 
-# Simulate rotating avatars
+# Simulate rotating avatars (side to side)
 def rotate_image(image, angle):
     return image.rotate(angle, expand=True)
 
