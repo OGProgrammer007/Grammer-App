@@ -19,31 +19,11 @@ COLORS = {
 # Folder where avatar images are stored in the repository
 AVATAR_FOLDER = "Scoreboard_project/"
 
-# Background music file (Make sure the file is located in the same folder or adjust path accordingly)
+# Music file path
 BACKGROUND_MUSIC = "Scoreboard_project/funky_music.mp3"
 
-# Play background music
-st.markdown(f"""
-    <audio autoplay loop>
-        <source src="data:audio/mp3;base64,{open(BACKGROUND_MUSIC, 'rb').read().encode('base64')}" type="audio/mp3">
-        Your browser does not support the audio element.
-    </audio>
-""", unsafe_allow_html=True)
-
-# Chat widget embed code (from Tawk.to)
-st.markdown("""
-<script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/your_tawkto_id/default';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-    })();
-</script>
-""", unsafe_allow_html=True)
+# Embed the music player (this will auto-play the song when the app is loaded)
+st.audio(BACKGROUND_MUSIC, start_time=0)
 
 # Load player scores from Excel
 def load_scores():
