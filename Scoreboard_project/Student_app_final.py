@@ -64,8 +64,8 @@ def draw_leaderboard(df):
         # Sorting the players based on their scores in descending order
         sorted_players = df.sort_values(by="Score", ascending=False)
 
-        # Display top 3 players with gold, silver, and bronze labels
-        for i, row in sorted_players.head(3).iterrows():
+        # Display top 5 players with gold, silver, and bronze labels
+        for i, row in sorted_players.head(5).iterrows():
             col1, col2 = st.columns([1, 3])
 
             with col1:
@@ -81,27 +81,24 @@ def draw_leaderboard(df):
                 color = COLORS["gold"] if i == 0 else COLORS["silver"] if i == 1 else COLORS["bronze"]
                 st.markdown(f"<h3 style='color:{color}'>{i + 1}. {row['Name']}</h3>", unsafe_allow_html=True)
                 st.markdown(f"**{row['Score']} points**", unsafe_allow_html=True)
-        
-        # Display remaining players (from 4th onward)
-        for i, row in sorted_players.iloc[3:].iterrows():
-            col1, col2 = st.columns([1, 3])
 
-            with col1:
-                avatar_path = os.path.join(AVATAR_FOLDER, row["Avatar"])
-                avatar = load_avatar(avatar_path)
-                if avatar:
-                    # Apply rotation
-                    angle = np.sin(time.time()) * 30  # Continuous rotation effect
-                    rotated_avatar = rotate_image(avatar, angle)
-                    st.image(rotated_avatar, width=100)
-
-            with col2:
-                st.markdown(f"<h3 style='color:{COLORS['white']}'>{i + 1}. {row['Name']}</h3>", unsafe_allow_html=True)
-                st.markdown(f"**{row['Score']} points**", unsafe_allow_html=True)
-    
-        # Expandable section for remaining players
+        # Display remaining players (from 6th onward) in a scrollable section
         with st.expander("View all players"):
-            st.dataframe(sorted_players)
+            for i, row in sorted_players.iloc[5:].iterrows():
+                col1, col2 = st.columns([1, 3])
+
+                with col1:
+                    avatar_path = os.path.join(AVATAR_FOLDER, row["Avatar"])
+                    avatar = load_avatar(avatar_path)
+                    if avatar:
+                        # Apply rotation
+                        angle = np.sin(time.time()) * 30  # Continuous rotation effect
+                        rotated_avatar = rotate_image(avatar, angle)
+                        st.image(rotated_avatar, width=100)
+
+                with col2:
+                    st.markdown(f"<h3 style='color:{COLORS['white']}'>{i + 1}. {row['Name']}</h3>", unsafe_allow_html=True)
+                    st.markdown(f"**{row['Score']} points**", unsafe_allow_html=True)
     
 # Load data and display leaderboard
 df = load_scores()
