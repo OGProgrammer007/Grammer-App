@@ -39,18 +39,17 @@ def load_scores():
         return pd.DataFrame(columns=["Name", "Score", "Avatar"])
 
 # Load and resize avatars
-def load_avatar(avatar_filename):
-    avatar_path = os.path.join(AVATAR_FOLDER, avatar_filename)
-    if avatar_filename and os.path.exists(avatar_path):
+def load_avatar(path):
+    if path and os.path.exists(path):
         try:
-            img = Image.open(avatar_path)
+            img = Image.open(path)
             return img.resize((100, 100))
         except Exception:
-            st.warning(f"Could not load avatar: {avatar_path}")
+            st.warning(f"Could not load avatar: {path}")
             return None
     return None
 
-# Rotate image (smooth side-to-side rotation effect)
+# Simulate rotating avatars
 def rotate_image(image, angle):
     return image.rotate(angle, expand=True)
 
@@ -58,54 +57,36 @@ def rotate_image(image, angle):
 def draw_leaderboard(df):
     st.title("🏆 Leaderboard")
     
-    # Play funky music and set it to loop
-    if os.path.exists(MUSIC_FILE):
-        st.audio(MUSIC_FILE, format='audio/mp3', start_time=0, loop=True)
-    
     if df.empty:
         st.warning("No data available.")
     else:
-        # Display top 5 players with blue score points
-        for i, row in df.head(5).iterrows():
-            col1, col2 = st.columns([1, 3])
-        
-            with col1:
-                avatar = load_avatar(row["Avatar"])  # Load avatar by file name
-                if avatar:
-                    # Apply smooth side-to-side rotation (bob and rotate effect)
-                    angle = np.sin(time.time() * 2 + i) * 30  # Side-to-side bobbing rotation
-                    avatar = rotate_image(avatar, angle)
-                    st.image(avatar)
-        
-            with col2:
-                # Labeling based on their position (rank)
-                rank = i + 1
-                rank_label = f"{rank}{'st' if rank == 1 else 'nd' if rank == 2 else 'rd' if rank == 3 else 'th'}"
-                st.subheader(f"{rank_label}. {row['Name']}")
-                st.markdown(f"<h3 style='color:{COLORS['blue']}'>{row['Score']} points</h3>", unsafe_allow_html=True)
-    
-        # Scrollable section for all players
-        st.subheader("All Players")
-        with st.expander("Click to view all players"):
-            # Display the remaining players
-            for i, row in df[5:].iterrows():
-                col1, col2 = st.columns([1, 3])
-            
-                with col1:
-                    avatar = load_avatar(row["Avatar"])  # Load avatar by file name
-                    if avatar:
-                        # Apply smooth side-to-side rotation (bob and rotate effect)
-                        angle = np.sin(time.time() * 2 + i) * 30  # Side-to-side bobbing rotation
-                        avatar = rotate_image(avatar, angle)
-                        st.image(avatar)
-            
-                with col2:
-                    # Labeling based on their position (rank)
-                    rank = i + 1
-                    rank_label = f"{rank}{'st' if rank == 1 else 'nd' if rank == 2 else 'rd' if rank == 3 else 'th'}"
-                    st.subheader(f"{rank_label}. {row['Name']}")
-                    st.write(f"**Score:** {row['Score']} points")
+        # Sorting the players based on their scores in descending order
+        sorted_players = df.sort_values(by="Score", ascending=False)
 
+        # Display top 5 players
+        for i, row in sorted_players.head(5).iterrows():
+            col1, col2 = st.columns([1, 3])
+
+            with col1:
+                avatar_path = os.path.join(AVATAR_FOLDER, row["Avatar"])
+                avatar = load_avatar(avatar_path)
+                if avatar:
+                    # Apply rotation
+                    angle = np.sin(time.time()) * 30  # Continuous rotation effect
+                    rotated_avatar = rotate_image(avatar, angle)
+                    st.image(rotated_avatar, width=100)
+
+            with col2:
+                st.subheader(f"{i + 1}. {row['Name']}")
+                st.write(f"**Score:** {row['Score']} points")
+    
+        # Expandable section for remaining players
+        with st.expander("View all players"):
+            st.dataframe(sorted_players)
+    
 # Load data and display leaderboard
 df = load_scores()
 draw_leaderboard(df)
+
+# Play funky music in the background
+st.audio(MUSIC_FILE, format="audio/mp3", start_time=0)
