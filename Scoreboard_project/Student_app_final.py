@@ -6,7 +6,7 @@ import time
 from streamlit.components.v1 import html
 
 # Excel file path
-EXCEL_FILE = "Scoreboard_project/scores_with_avatars.xlsx"
+EXCEL_FILE = "Scoreboard_project/scores_with_avatars(4).xlsx"
 
 # Colors
 COLORS = {
